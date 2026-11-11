@@ -22,6 +22,7 @@ where
 {
     type Rejection = AppError;
 
+    #[allow(refining_impl_trait)]
     fn from_request_parts<'a>(
         parts: &'a mut Parts,
         _state: &S,

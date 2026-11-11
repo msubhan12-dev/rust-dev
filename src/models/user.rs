@@ -83,12 +83,14 @@ pub struct RegisterResponse {
 
 /// Refresh token request
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[allow(dead_code)]
 pub struct RefreshTokenRequest {
     pub token: String,
 }
 
 /// Refresh token response
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[allow(dead_code)]
 pub struct RefreshTokenResponse {
     pub token: String,
     pub expires_in: i64,

@@ -6,6 +6,7 @@ use axum::{
 use std::net::SocketAddr;
 use tower_http::cors::CorsLayer;
 use tracing_subscriber;
+use std::env;
 
 mod db;
 #[allow(dead_code)]
@@ -18,6 +19,30 @@ mod handlers;
 mod middleware;
 
 use auth::JwtHandler;
+
+/**
+ * Configure CORS based on environment
+ * Development: Allow localhost:5173 (Vue.js frontend)
+ * Production: Allow specific origins
+ */
+fn get_cors_layer() -> CorsLayer {
+    let env = env::var("ENVIRONMENT").unwrap_or_else(|_| "development".to_string());
+    
+    match env.as_str() {
+        "production" => {
+            // Production: Restrict to specific origins
+            CorsLayer::very_permissive()
+            // In production, configure with specific origins:
+            // .allow_origin(AllowOrigin::predicate(|origin, _request_head| {
+            //     origin.as_bytes().ends_with(b"yourdomain.com")
+            // }))
+        },
+        _ => {
+            // Development: Allow all origins (frontend, testing, etc)
+            CorsLayer::very_permissive()
+        }
+    }
+}
 
 #[tokio::main]
 async fn main() {
@@ -62,7 +87,7 @@ async fn main() {
         .route("/api/auth/logout", post(handlers::logout))
         // Protected routes
         .route("/api/users/me", get(handlers::get_current_user))
-        .layer(CorsLayer::permissive())
+        .layer(get_cors_layer())
         .with_state(pool);
 
     // Run our app with hyper
@@ -81,7 +106,7 @@ async fn main() {
 
 // Basic routes
 async fn root_handler() -> &'static str {
-    "🎉 Rust PostgreSQL API Service - Phase 1.6 ✅ (Protected Endpoints)"
+    "🎉 Rust PostgreSQL API Service - Phase 3.1 ✅ (CORS Enabled)"
 }
 
 async fn health_check() -> (StatusCode, String) {

@@ -19,6 +19,7 @@ pub enum AppError {
     // Authentication errors
     InvalidEmail,
     InvalidPassword,
+    #[allow(dead_code)]
     PasswordTooShort,
     EmailAlreadyExists,
     InvalidCredentials,
